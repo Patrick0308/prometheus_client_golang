@@ -26,16 +26,6 @@ import (
 	"time"
 )
 
-// DefaultRoundTripper is used if no RoundTripper is set in Config.
-var DefaultRoundTripper http.RoundTripper = &http.Transport{
-	Proxy: http.ProxyFromEnvironment,
-	DialContext: (&net.Dialer{
-		Timeout:   30 * time.Second,
-		KeepAlive: 30 * time.Second,
-	}).DialContext,
-	TLSHandshakeTimeout: 10 * time.Second,
-}
-
 // Config defines configuration parameters for a new client.
 type Config struct {
 	// The address of the Prometheus to connect to.
@@ -52,7 +42,15 @@ type Config struct {
 
 func (cfg *Config) roundTripper() http.RoundTripper {
 	if cfg.RoundTripper == nil {
-		return DefaultRoundTripper
+		// DefaultRoundTripper is used if no RoundTripper is set in Config.
+		return &http.Transport{
+			Proxy: http.ProxyFromEnvironment,
+			DialContext: (&net.Dialer{
+				Timeout:   30 * time.Second,
+				KeepAlive: 30 * time.Second,
+			}).DialContext,
+			TLSHandshakeTimeout: 10 * time.Second,
+		}
 	}
 	return cfg.RoundTripper
 }
