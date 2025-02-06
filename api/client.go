@@ -18,13 +18,14 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"net"
 	"net/http"
 	"net/url"
 	"path"
 	"strings"
-	"time"
 )
+
+// DefaultRoundTripper is used if no RoundTripper is set in Config.
+var DefaultRoundTripper http.RoundTripper = &http.Transport{}
 
 // Config defines configuration parameters for a new client.
 type Config struct {
@@ -42,15 +43,7 @@ type Config struct {
 
 func (cfg *Config) roundTripper() http.RoundTripper {
 	if cfg.RoundTripper == nil {
-		// DefaultRoundTripper is used if no RoundTripper is set in Config.
-		return &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-			DialContext: (&net.Dialer{
-				Timeout:   30 * time.Second,
-				KeepAlive: 30 * time.Second,
-			}).DialContext,
-			TLSHandshakeTimeout: 10 * time.Second,
-		}
+		return DefaultRoundTripper
 	}
 	return cfg.RoundTripper
 }
