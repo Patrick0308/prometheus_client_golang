@@ -114,7 +114,6 @@ func (c *httpClient) URL(ep string, args map[string]string) *url.URL {
 }
 
 func (c *httpClient) CloseIdleConnections() {
-	c.client.CloseIdleConnections()
 }
 
 func (c *httpClient) Do(ctx context.Context, req *http.Request) (*http.Response, []byte, error) {
